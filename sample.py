@@ -29,7 +29,7 @@ for item in r:
 obj = calil_API.check(isbn=4834000826,systemid="Aomori_Pref")
 r = obj.API_call() # ジェネレーターが帰ってくる
 for res in r:
-    # resはdict。キーとかは公式の仕様書に準ずる（URL上記）
+    # dictがyieldされる。キーとかは公式の仕様書に準ずる（URL上記）
     # APIの都合上2秒毎にしかyieldされない
     print(json.dumps(res,indent=2))
 
