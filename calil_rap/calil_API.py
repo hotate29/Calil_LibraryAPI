@@ -66,7 +66,7 @@ class check():
         if type(isbn) in (tuple, list):
             if len(isbn) == 0:
                 raise TypeError("isbn argument must be int type")
-            isbns = ",".join(map(str,isbn))
+            isbns = ",".join(map(str, isbn))
         elif isinstance(isbn, int):
             isbns = isbn
         else:
@@ -118,3 +118,75 @@ class check():
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
                 return await response.json()
+
+
+async def async_library(
+        pref=None,
+        city=None,
+        systemid=None,
+        geocode=None,
+        limit=None) -> None:
+    if pref is None and systemid is None and geocode is None:
+        raise TypeError(
+            "There are not enough arguments.\n\
+            You need to specify one of pref, systemid, geocode.")
+    if city and pref is None:
+        raise TypeError("Please specify the pref")
+    URL = f"http://api.calil.jp/library?appkey={key}&format=json&callback= "
+    if pref:
+        URL += f"&pref={pref}"
+    if city:
+        URL += f"&city={city}"
+    if systemid:
+        URL += f"&systemid={systemid}"
+    if geocode:
+        URL += f"&geocode={geocode[0]},{geocode[1]}"
+    if limit:
+        URL += f"&limit={limit}"
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(URL) as response:
+            r = await response.json()
+
+    return r
+
+
+async def async_check(isbn, systemid):
+    if type(isbn) in (tuple, list):
+        if len(isbn) == 0:
+            raise TypeError("isbn argument must be int type")
+        isbns = ",".join(map(str, isbn))
+    elif isinstance(isbn, int):
+        isbns = isbn
+    else:
+        raise TypeError("isbn type is int tuple or list")
+    if type(systemid) in (tuple, list):
+        if len(systemid) == 0:
+            raise TypeError("systemid argument must be str type")
+        ids = ",".join(systemid)
+    elif isinstance(systemid, str):
+        ids = systemid
+    else:
+        raise TypeError("systemid type is str tuple or list")
+
+    URL = f"http://api.calil.jp/check?appkey={key}&isbn={isbns}&systemid={ids}&format=json&callback=no"
+
+    f = True
+    count = 1
+    # polling = False
+    async with aiohttp.ClientSession() as session:
+        while(f):
+            if count == 2:
+                URL = f"http://api.calil.jp/check?appkey={key}&session={r_session}&format=json&callback=no"
+            async with session.get(URL) as response:
+                r = await response.json()
+
+            if r["continue"] == 0:
+                f = False
+            elif r["continue"] == 1:
+                r_session = r["session"]
+                count += 1
+                print("!!!")
+                await asyncio.sleep(2)
+                print("???")
+            yield r
