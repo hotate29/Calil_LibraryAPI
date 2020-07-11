@@ -186,7 +186,5 @@ async def async_check(isbn, systemid):
             elif r["continue"] == 1:
                 r_session = r["session"]
                 count += 1
-                print("!!!")
                 await asyncio.sleep(2)
-                print("???")
             yield r
