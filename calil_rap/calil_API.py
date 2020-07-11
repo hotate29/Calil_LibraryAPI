@@ -125,7 +125,7 @@ async def async_library(
         city=None,
         systemid=None,
         geocode=None,
-        limit=None) -> None:
+        limit=None) -> dict:
     if pref is None and systemid is None and geocode is None:
         raise TypeError(
             "There are not enough arguments.\n\
@@ -151,7 +151,7 @@ async def async_library(
     return r
 
 
-async def async_check(isbn, systemid):
+async def async_check(isbn, systemid) -> Generator[dict]:
     if type(isbn) in (tuple, list):
         if len(isbn) == 0:
             raise TypeError("isbn argument must be int type")
