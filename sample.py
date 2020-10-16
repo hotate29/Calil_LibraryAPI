@@ -1,18 +1,17 @@
-import calil_rap.calil_API as calil_API
+import Calil_API
 import json
 
-calil_API.key = "API_KEY"
+client = Calil_API.Client("API_KEY")
 
 # 東京都中京区の図書館の情報
 # 引数は公式の仕様書（https://calil.jp/doc/api_ref.html）
 # に準ずる
 
 # geocodeはTupleとかで
-calil_API.library(geocode=(136.7163027,35.390516),limit=10)
+client.library(geocode=(136.7163027, 35.390516), limit=10)
 
-obj = calil_API.library(pref="東京都",city="中央区")
-r = obj.API_call() # listで帰ってくる
-for item in r:
+res = client.library(pref="東京都", city="中央区")
+for item in res:
     # キーは公式の仕様書（https://calil.jp/doc/api_ref.html）
     # に準ずる
     print(item["formal"])
@@ -26,12 +25,16 @@ for item in r:
 # https://www.nfaj.go.jp/visit/library/
 # ...
 
-obj = calil_API.check(isbn=4834000826,systemid="Aomori_Pref")
-r = obj.API_call() # ジェネレーターが帰ってくる
-for res in r:
+# 引数はtupleかlistで
+res = client.check(isbns=(4834000826,), systemids=("Aomori_Pref",))
+for r in res:  # ジェネレーターが帰ってくる
     # dictがyieldされる。キーとかは公式の仕様書に準ずる（URL上記）
     # APIの都合上2秒毎にしかyieldされない
-    print(json.dumps(res,indent=2))
+    print(json.dumps(r, indent=2))
 
 # 複数指定もできる
-obj = calil_API.check(isbn=(4834000826,4041069513),systemid=("Aomori_Pref","Shiga_Pref"))
+res = client.check(
+    isbns=(
+        4834000826, 4041069513),
+    systemids=(
+        "Aomori_Pref", "Shiga_Pref"))
