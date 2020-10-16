@@ -7,6 +7,13 @@ import requests
 
 class Client:
     def __init__(self, api_key: str = None) -> None:
+        """
+        Parameters
+        ----------
+        api_key : str
+            APIのキー。指定しなかった場合は環境変数"CALIL_API_KEY"から取得。
+            無かったらエラー
+        """
         if api_key is None:
             self.API_KEY = os.environ["CALIL_API_KEY"]
         else:
