@@ -21,6 +21,8 @@ class Client:
                 limit: int = None) -> List[Dict[str, Any]]:
         if (pref == systemid == geocode is None):
             raise Exception  # あとでかんがえる
+        if pref is None and bool(city):
+            raise Exception  # あとでかんがえる
 
         params: Dict[str, Union[str, int]] = {
             "appkey": self.API_KEY,
