@@ -1,5 +1,4 @@
-calilの[図書館API](https://calil.jp/doc/api.html)のラッパーです。
-かなり適当です。
+calilの[図書館API](https://calil.jp/doc/api.html)のラッパー、かなり適当です。
 
 ```python
 import calil_rap.calil_API as calil_API

@@ -3,13 +3,13 @@ import json
 
 client = Calil_API.Client("API_KEY")
 
-# 東京都中京区の図書館の情報
+
 # 引数は公式の仕様書（https://calil.jp/doc/api_ref.html）
 # に準ずる
-
 # geocodeはTupleとかで
 client.library(geocode=(136.7163027, 35.390516), limit=10)
 
+# 東京都中京区の図書館の情報
 res = client.library(pref="東京都", city="中央区")
 for item in res:
     # キーは公式の仕様書（https://calil.jp/doc/api_ref.html）
