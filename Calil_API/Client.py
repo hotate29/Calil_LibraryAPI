@@ -1,12 +1,13 @@
-from typing import Any, Dict, Generator, List, Tuple, Union
+from typing import Any, Dict, Final, Generator, Iterable, List, Optional, Tuple, Union
 import os
 import time
 
 import requests
+from requests.sessions import Session
 
 
 class Client:
-    def __init__(self, api_key: str = None) -> None:
+    def __init__(self, api_key: Optional[str] = None) -> None:
         """
         Parameters
         ----------
@@ -14,18 +15,19 @@ class Client:
             APIのキー。指定しなかった場合は環境変数"CALIL_API_KEY"から取得。
             無かったらエラー
         """
+        self.API_KEY: str
         if api_key is None:
             self.API_KEY = os.environ["CALIL_API_KEY"]
         else:
             self.API_KEY = api_key
-        self.session = requests.session()
+        self.session: Final[Session] = requests.session()
 
     def library(self,
                 pref: str = None,
                 city: str = None,
                 systemid: str = None,
                 geocode: Tuple[float, float] = None,
-                limit: int = None) -> List[Dict[str, Any]]:
+                limit: Optional[int] = None) -> List[Dict[str, Any]]:
         """
         図書館を検索する
 
@@ -71,8 +73,8 @@ class Client:
         return r.json()
 
     def check(self,
-              isbns: Union[List[int], Tuple[int], Tuple] = tuple(),
-              systemids: Union[List[str], Tuple[str], Tuple] = tuple(),
+              isbns: Iterable[int],
+              systemids: Iterable[str],
               wait: int = 2) -> Generator[Dict[str, Any], None, None]:
         """
         図書館の蔵書を検索する
@@ -97,9 +99,12 @@ class Client:
             isbns systemidsのどれかを指定しなかった場合
             waitを2未満に指定した場合
         """
+
+        isbns = tuple(isbns)
+        systemids = tuple(systemids)
+        10
         if len(isbns) == 0 or len(systemids) == 0 or wait < 2:
             raise ValueError  # 後で考える
-
         params = {
             "appkey": self.API_KEY,
             "isbn": ",".join(str(isbn) for isbn in isbns),
