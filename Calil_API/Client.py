@@ -5,6 +5,8 @@ import time
 import requests
 from requests.sessions import Session
 
+from .Library import Library
+
 
 class Client:
     def __init__(self, api_key: Optional[str] = None) -> None:
@@ -23,11 +25,11 @@ class Client:
         self.session: Final[Session] = requests.session()
 
     def library(self,
-                pref: str = None,
-                city: str = None,
-                systemid: str = None,
-                geocode: Tuple[float, float] = None,
-                limit: Optional[int] = None) -> List[Dict[str, Any]]:
+                pref: Optional[str] = None,
+                city: Optional[str] = None,
+                systemid: Optional[str] = None,
+                geocode: Optional[Tuple[float, float]] = None,
+                limit: Optional[int] = None) -> List[Library]:
         """
         図書館を検索する
 
@@ -55,7 +57,7 @@ class Client:
             pref systemid geocodeを指定しなかった場合。
             cityを指定したものの、prefが指定さていなかった場合。
         """
-        if (pref == systemid == geocode is None):
+        if (pref == systemid == geocode) and (pref is None):
             raise ValueError  # あとでかんがえる
         if pref is None and bool(city):
             raise ValueError  # あとでかんがえる
@@ -65,12 +67,14 @@ class Client:
             "format": "json",
             "callback": ""
         }
-        for k, v in (("pref", pref), ("city", city),
-                     ("systemid", systemid), ("limit", limit)):
+        for k, v in zip(("pref", "city", "systemid", "limit"),
+                        (pref, city, systemid, limit)):
             if v is not None:
                 params[k] = v
+
         r = self.session.get("https://api.calil.jp/library", params=params)
-        return r.json()
+        assert r.status_code == requests.codes.ok
+        return [Library(**lib) for lib in r.json()]
 
     def check(self,
               isbns: Iterable[int],
@@ -102,8 +106,7 @@ class Client:
 
         isbns = tuple(isbns)
         systemids = tuple(systemids)
-        10
-        if len(isbns) == 0 or len(systemids) == 0 or wait < 2:
+        if len(isbns) > 100 or min(len(isbns), len(systemids)) == 0 or wait < 2:
             raise ValueError  # 後で考える
         params = {
             "appkey": self.API_KEY,
@@ -114,6 +117,7 @@ class Client:
         }
 
         r = self.session.get("https://api.calil.jp/check", params=params)
+        assert r.status_code == requests.codes.ok
         resp = r.json()
         yield resp["books"]
         while resp["continue"]:
@@ -126,6 +130,6 @@ class Client:
             }
             r = self.session.get(
                 "https://api.calil.jp/check", params=params)
-
+            assert r.status_code == requests.codes.ok
             resp = r.json()
             yield resp["books"]

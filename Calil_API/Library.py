@@ -1,9 +1,8 @@
-from dataclasses import dataclass
 import dataclasses
 from typing import Any, Tuple
 
 
-@dataclass
+@dataclasses.dataclass
 class Library:
     category: str
     city: str
@@ -26,3 +25,9 @@ class Library:
 
     def __post_init__(self):
         self.geocode_tuple = tuple(map(float,self.geocode.split(",",1)))
+
+    def asdict(self):
+        return dataclasses.asdict(self)
+
+    def astuple(self):
+        return dataclasses.astuple(self)
