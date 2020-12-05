@@ -20,9 +20,9 @@ for library in resp:
     print(lib.formal)
     print(lib.url_pc)
 # 京都市こどもみらい館子育て図書館
-# https://www2.kyotocitylib.jp/
+# https://calil.jp/library/102146/京都市こどもみらい館子育て図書館
 # 京都市下京図書館
-# https://www2.kyotocitylib.jp/
+# https://calil.jp/library/102147/京都市下京図書館
 # 京都市中央図書館
 # ...
 ```

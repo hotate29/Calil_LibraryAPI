@@ -10,11 +10,9 @@ pref = input("都道府県名:\n")
 city = input("市区町村名:\n")
 r = Client.library(pref,city)
 
-print(type(r[0]))
-
 if r == []:
     print("なし")
 else:
     for lib in r:
         print(lib.formal)
-        print(lib.url_pc)
+        print(f"https://calil.jp/library/{lib.libid}/{lib.formal}".replace(" ",""))
