@@ -8,11 +8,11 @@ Client = Client(API_KEY)
 
 pref = input("都道府県名:\n")
 city = input("市区町村名:\n")
-r = Client.library(pref,city)
+resp = Client.library(pref,city)
 
-if r == []:
+if resp == []:
     print("なし")
 else:
-    for lib in r:
+    for lib in resp:
         print(lib.formal)
         print(f"https://calil.jp/library/{lib.libid}/{lib.formal}".replace(" ",""))

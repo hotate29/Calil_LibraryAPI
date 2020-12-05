@@ -13,7 +13,7 @@ resp = client.library(pref="京都府",city="京都市",systemid=None,limit=10)
 引数は公式の仕様書とほぼ同じ。（https://calil.jp/doc/api_ref.html）  
 Libraryインスタンスが入ったリストが帰ってくる
 ```python
-print(type(r[0]))
+print(type(resp[0]))
 # <class 'Calil_API.Library.Library'>
 
 for library in resp:
@@ -29,9 +29,9 @@ for library in resp:
 
 ### 蔵書検索
 ```python
-r = client.check(isbns=(4834000826,),systemids=("Aomori_Pref",))
-for res in r:
+resp = client.check(isbns=(4834000826,),systemids=("Aomori_Pref",))
+for res in resp:
     print(res)
     # ずらずら～
 ```
-APIから受け取ったのをそのまま返してます。
+APIから受け取った内容の["books"]を切り取って返します。

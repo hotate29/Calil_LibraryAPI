@@ -36,11 +36,11 @@ class Client:
         Parameters
         ----------
         pref : str default None
-            都道府県の名前（"北海道" とか）
+            都道府県の名前（"北海道"）
         city : str default None
-            市区町村の名前（"札幌市" とか）
+            市区町村の名前（"札幌市"）
         systemid : str default None
-            図書館のシステムid（"Hokkaido_Sapporo" とか）
+            図書館のシステムid（"Hokkaido_Sapporo"）
         geocode : (緯度,経度) default None
             この地点の近い順に図書館を出力する
         limit : int default None
@@ -62,19 +62,21 @@ class Client:
         if pref is None and bool(city):
             raise ValueError  # あとでかんがえる
 
+        EndPoint: Final[str] = "https://api.calil.jp/library"
+
         params: Dict[str, Union[str, int]] = {
             "appkey": self.API_KEY,
             "format": "json",
             "callback": ""
         }
-        for k, v in zip(("pref", "city", "systemid", "limit"),
-                        (pref, city, systemid, limit)):
-            if v is not None:
-                params[k] = v
+        for key, value in zip(("pref", "city", "systemid", "limit"),
+                              (pref, city, systemid, limit)):
+            if value is not None:
+                params[key] = value
 
-        r = self.session.get("https://api.calil.jp/library", params=params)
-        assert r.status_code == requests.codes.ok
-        return [Library(**lib) for lib in r.json()]
+        resp = self.session.get(EndPoint, params=params)
+        assert resp.status_code == requests.codes.ok
+        return [Library(**lib) for lib in resp.json()]
 
     def check(self,
               isbns: Iterable[int],
@@ -85,9 +87,9 @@ class Client:
 
         Parameters
         ----------
-        isbns : intが入ったtupleもしくはlist
+        isbns : intが入ったtupleに変換できるもの
             検索する書籍のisbn
-        systemids : strが入ったtupleもしくはlist
+        systemids : strが入ったtupleに変換できるもの
             検索する図書館のsystemid
         wait : int default 2
             ポーリングの間隔を指定する
@@ -106,8 +108,11 @@ class Client:
 
         isbns = tuple(isbns)
         systemids = tuple(systemids)
-        if len(isbns) > 100 or min(len(isbns), len(systemids)) == 0 or wait < 2:
+        if len(isbns) > 100 or min(
+                len(isbns),
+                len(systemids)) == 0 or wait < 2:
             raise ValueError  # 後で考える
+        EndPoint: Final[str] = "https://api.calil.jp/check"
         params = {
             "appkey": self.API_KEY,
             "isbn": ",".join(str(isbn) for isbn in isbns),
@@ -116,9 +121,9 @@ class Client:
             "callback": "no"
         }
 
-        r = self.session.get("https://api.calil.jp/check", params=params)
-        assert r.status_code == requests.codes.ok
-        resp = r.json()
+        resp = self.session.get(EndPoint, params=params)
+        assert resp.status_code == requests.codes.ok
+        resp = resp.json()
         yield resp["books"]
         while resp["continue"]:
             time.sleep(wait)
@@ -128,8 +133,7 @@ class Client:
                 "format": "json",
                 "callback": "no"
             }
-            r = self.session.get(
-                "https://api.calil.jp/check", params=params)
-            assert r.status_code == requests.codes.ok
-            resp = r.json()
+            resp = self.session.get(EndPoint, params=params)
+            assert resp.status_code == requests.codes.ok
+            resp = resp.json()
             yield resp["books"]
