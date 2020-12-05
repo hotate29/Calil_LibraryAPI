@@ -3,7 +3,7 @@ calilの[図書館API](https://calil.jp/doc/api.html)のラッパー
 ```python
 from Calil_API import Client
 
-client = Client.Client("API_KEY")
+client = Client("API_KEY")
 ```
 
 ### 図書館データベース
