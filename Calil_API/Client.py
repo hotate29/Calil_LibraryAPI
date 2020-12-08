@@ -57,10 +57,25 @@ class Client:
             pref systemid geocodeを指定しなかった場合。
             cityを指定したものの、prefが指定さていなかった場合。
         """
+        if pref is not None:
+            if not isinstance(pref, str):
+                raise TypeError("The pref argument must be of type str")
+        if city is not None:
+            if not isinstance(city, str):
+                raise TypeError("The city argument must be of type str")
+        if systemid is not None:
+            if not isinstance(systemid, str):
+                raise TypeError("The systemid argument must be of type str")
+        if limit is not None:
+            if not isinstance(limit, int):
+                raise TypeError("The limit argument must be of type int")
+
         if (pref == systemid == geocode) and (pref is None):
-            raise ValueError  # あとでかんがえる
+            raise ValueError(
+                "Arguments pref and one of systemid and geocode must be specified")
         if pref is None and bool(city):
-            raise ValueError  # あとでかんがえる
+            raise ValueError(
+                "Along with the argument city, the argument pref must also be specified")
 
         EndPoint: Final[str] = "https://api.calil.jp/library"
 
