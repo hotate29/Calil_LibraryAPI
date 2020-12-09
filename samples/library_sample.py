@@ -1,6 +1,6 @@
 import sys
 sys.path.append('./')
-from Calil_API import Client
+from calilapi import Client
 
 
 API_KEY = ""

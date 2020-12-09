@@ -5,7 +5,7 @@ import time
 import requests
 from requests.sessions import Session
 
-from .Library import Library
+from .library import Library
 
 
 class Client:

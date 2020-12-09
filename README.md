@@ -1,7 +1,7 @@
 calilの[図書館API](https://calil.jp/doc/api.html)のラッパー
 
 ```python
-from Calil_API import Client
+from calilapi import Client
 
 client = Client("API_KEY")
 ```
