@@ -80,9 +80,17 @@ class Client:
         if (pref == systemid == geocode) and (pref is None):
             raise ValueError(
                 "Arguments pref and one of systemid and geocode must be specified")
-        if pref is None and bool(city):
+        if (pref is None) and (city is not None):
             raise ValueError(
                 "Along with the argument city, the argument pref must also be specified")
+        if geocode is not None:
+            try:
+                geocode[0]
+                geocode[1]
+            except TypeError:
+                raise TypeError("The argument geocode can not be referenced in the index")
+            if not (isinstance(geocode[0],float) and isinstance(geocode[1],float)):
+                raise TypeError("What you specify for the geocode argument must be a container with a float")
 
         EndPoint: Final[str] = "https://api.calil.jp/library"
 
