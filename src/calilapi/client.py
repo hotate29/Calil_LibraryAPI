@@ -8,6 +8,13 @@ from requests.sessions import Session
 from .library import Library
 
 
+def statuscode_check(status_code: int):
+    if status_code != requests.codes.ok:
+        raise Exception(
+            f"The HTTP status code returned by the API was {status_code}")
+    return True
+
+
 class Client:
     def __init__(self, api_key: Optional[str] = None) -> None:
         """
@@ -90,7 +97,7 @@ class Client:
                 params[key] = value
 
         resp = self.session.get(EndPoint, params=params)
-        assert resp.status_code == requests.codes.ok
+        statuscode_check(resp.status_code)
         return [Library(**lib) for lib in resp.json()]
 
     def check(self,
@@ -137,7 +144,7 @@ class Client:
         }
 
         resp = self.session.get(EndPoint, params=params)
-        assert resp.status_code == requests.codes.ok
+        statuscode_check(resp.status_code)
         resp = resp.json()
         yield resp["books"]
         while resp["continue"]:
@@ -149,6 +156,6 @@ class Client:
                 "callback": "no"
             }
             resp = self.session.get(EndPoint, params=params)
-            assert resp.status_code == requests.codes.ok
+            statuscode_check(resp.status_code)
             resp = resp.json()
             yield resp["books"]
