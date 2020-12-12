@@ -1,4 +1,4 @@
-from typing import Any, Dict, Final, Generator, Iterable, List, Optional, Tuple, Union
+from typing import Any, Dict, Final, Generator, Iterable, List, Optional, Sequence, Union
 import os
 import time
 
@@ -35,7 +35,7 @@ class Client:
                 pref: Optional[str] = None,
                 city: Optional[str] = None,
                 systemid: Optional[str] = None,
-                geocode: Optional[Tuple[float, float]] = None,
+                geocode: Optional[Sequence[float]] = None,
                 limit: Optional[int] = None) -> List[Library]:
         """
         図書館を検索する
@@ -103,10 +103,13 @@ class Client:
                               (pref, city, systemid, limit)):
             if value is not None:
                 params[key] = value
-
+        if geocode is not None:
+            params["geocode"] = f"{geocode[0]},{geocode[1]}"
         resp = self.session.get(EndPoint, params=params)
+        print(resp.url)
         statuscode_check(resp.status_code)
         return [Library(**lib) for lib in resp.json()]
+
 
     def check(self,
               isbns: Iterable[int],
