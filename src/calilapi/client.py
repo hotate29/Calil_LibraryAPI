@@ -106,7 +106,6 @@ class Client:
         if geocode is not None:
             params["geocode"] = f"{geocode[0]},{geocode[1]}"
         resp = self.session.get(EndPoint, params=params)
-        print(resp.url)
         statuscode_check(resp.status_code)
         return [Library(**lib) for lib in resp.json()]
 
