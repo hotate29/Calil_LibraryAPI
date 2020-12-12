@@ -110,7 +110,6 @@ class Client:
         statuscode_check(resp.status_code)
         return [Library(**lib) for lib in resp.json()]
 
-
     def check(self,
               isbns: Iterable[int],
               systemids: Iterable[str],
@@ -120,16 +119,16 @@ class Client:
 
         Parameters
         ----------
-        isbns : intが入ったtupleに変換できるもの
+        isbns : intが入ったIterable
             検索する書籍のisbn
-        systemids : strが入ったtupleに変換できるもの
+        systemids : strが入ったIterable
             検索する図書館のsystemid
         wait : int default 2
             ポーリングの間隔を指定する
 
         Returns
         -------
-        res : dict
+        res : Generator[dict]
             検索結果
 
         Raises
